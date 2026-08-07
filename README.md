@@ -79,6 +79,33 @@ bootstrap部分だけを事前確認するには、リポジトリ内で次を�
 ./bin/mise -C "$PWD" bootstrap --dry-run
 ```
 
+新しい環境でも、シェルが作成した既定の `~/.bashrc` が存在すると、mise は
+次のようなエラーで停止する。
+
+```text
+mise ERROR files: refusing to overwrite existing files:
+  ~/.bashrc
+```
+
+この場合は既存ファイルを日時付きで退避し、bootstrap を再実行する。
+
+```bash
+bashrc_backup="$HOME/.bashrc.before-dotfiles.$(date +%Y%m%d-%H%M%S)"
+mv "$HOME/.bashrc" "$bashrc_backup"
+
+cd ~/dotfiles
+./bin/mise -C "$PWD" bootstrap --yes
+```
+
+適用後、必要な設定が退避ファイルに残っていないか確認する。
+
+```bash
+diff -u "$bashrc_backup" ~/dotfiles/.bashrc
+```
+
+`diff` の終了コード `1` は差分があることを表す。必要な設定だけを
+`~/dotfiles/.bashrc` へ取り込み、不要になった退避ファイルは確認後に削除する。
+
 競合を強制置換する `--force-dotfiles` は、バックアップと差分確認が済んだ場合
 にのみ使用する。
 
