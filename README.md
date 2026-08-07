@@ -38,11 +38,20 @@ gh config set git_protocol ssh --host github.com
 gh auth status --hostname github.com
 ```
 
-認証後、GitHub CLI 経由で `~/dotfiles` へ clone してセットアップする。
+認証後、GitHub CLI 経由で `~/dotfiles` へ clone する。
 
 ```bash
 gh repo clone Kai17-a/dotfiles ~/dotfiles
 cd ~/dotfiles
+```
+
+新しい環境にも、OS やシェルが作成した既定の `~/.bashrc` が存在する。
+mise は既存ファイルを上書きしないため、`init.sh` の実行前に日時付きで退避する。
+
+```bash
+bashrc_backup="$HOME/.bashrc.before-dotfiles.$(date +%Y%m%d-%H%M%S)"
+mv "$HOME/.bashrc" "$bashrc_backup"
+
 bash init.sh
 ```
 
@@ -53,18 +62,26 @@ bash init.sh
 3. `mise bootstrap --update` でAPTパッケージ、リポジトリ、dotfiles、CLIツールを適用する
 4. GitHub CLI未認証時に使うログインコマンドを表示する
 
-セットアップ完了後、新しいシェルを開始する。
+セットアップ後、退避した `.bashrc` に引き継ぐべき設定がないか確認する。
+
+```bash
+diff -u "$bashrc_backup" ~/dotfiles/.bashrc
+```
+
+`diff` の終了コード `1` は差分があることを表す。必要な設定だけを
+`~/dotfiles/.bashrc` へ取り込み、確認後に退避ファイルを削除する。
+
+最後に新しいシェルを開始する。
 
 ```bash
 exec bash
 ```
 
-## 既存ファイルがある環境
+## その他の既存ファイル
 
-mise は、管理対象に既存の実ファイルやディレクトリがある場合、勝手に
-上書きせず競合として停止する。主な管理対象は次のとおり。
+`.bashrc` 以外にも、mise は管理対象に既存の実ファイルやディレクトリがあると
+上書きせず停止する。主な管理対象は次のとおり。
 
-- `~/.bashrc`
 - `~/.config/git`
 - `~/.config/helix`
 - `~/.config/mise`
@@ -72,42 +89,21 @@ mise は、管理対象に既存の実ファイルやディレクトリがある
 - `~/.config/zellij`
 - `~/.local/bin` 内の管理対象ファイル
 
-既存の設定が必要な場合は、`init.sh` 実行前にバックアップして差分を確認する。
-bootstrap部分だけを事前確認するには、リポジトリ内で次を実行する。
+セットアップ前に管理対象を確認したい場合は、次を実行する。
 
 ```bash
 ./bin/mise -C "$PWD" bootstrap --dry-run
 ```
 
-新しい環境でも、シェルが作成した既定の `~/.bashrc` が存在すると、mise は
-次のようなエラーで停止する。
+競合があると、mise は次のようなエラーで停止する。
 
 ```text
 mise ERROR files: refusing to overwrite existing files:
-  ~/.bashrc
+  <既存ファイル>
 ```
 
-この場合は既存ファイルを日時付きで退避し、bootstrap を再実行する。
-
-```bash
-bashrc_backup="$HOME/.bashrc.before-dotfiles.$(date +%Y%m%d-%H%M%S)"
-mv "$HOME/.bashrc" "$bashrc_backup"
-
-cd ~/dotfiles
-./bin/mise -C "$PWD" bootstrap --yes
-```
-
-適用後、必要な設定が退避ファイルに残っていないか確認する。
-
-```bash
-diff -u "$bashrc_backup" ~/dotfiles/.bashrc
-```
-
-`diff` の終了コード `1` は差分があることを表す。必要な設定だけを
-`~/dotfiles/.bashrc` へ取り込み、不要になった退避ファイルは確認後に削除する。
-
-競合を強制置換する `--force-dotfiles` は、バックアップと差分確認が済んだ場合
-にのみ使用する。
+競合したファイルは内容を確認して個別に退避し、`bash init.sh` を再実行する。
+`--force-dotfiles` は、バックアップと差分確認が済んだ場合にのみ使用する。
 
 ## 設定の再適用
 
