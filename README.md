@@ -60,7 +60,9 @@ bash init.sh
 1. `bin/mise` が固定バージョンのmiseをキャッシュへダウンロードする
 2. mise設定をtrustする
 3. `mise bootstrap --update` でAPTパッケージ、リポジトリ、dotfiles、CLIツールを適用する
-4. GitHub CLI未認証時に使うログインコマンドを表示する
+4. GitHub CLI の認証を確認し、Git のプロトコルを SSH に設定する
+
+GitHub CLI が未認証の場合は、SSH を使ってログインするためのコマンドを表示する。
 
 セットアップ後、退避した `.bashrc` に引き継ぐべき設定がないか確認する。
 
