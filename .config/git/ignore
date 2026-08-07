@@ -1,0 +1,15 @@
+# 共通ログ・キャッシュ
+logs
+*.log
+*.pid
+*.pid.lock
+*.seed
+*.tgz
+*.pdb
+
+# 環境変数
+.env
+.env.*
+!.env.example
+
+node_modules/

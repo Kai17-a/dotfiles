@@ -1,0 +1,73 @@
+[settings]
+disable_backends = ["npm", "vfox", "asdf"]
+dotfiles.root = "~/dotfiles"
+dotfiles.default_mode = "symlink"
+
+[env]
+EDITOR = "hx"
+_.path = ["~/.local/bin"]
+
+[dotfiles]
+"~/.bashrc" = { source = "~/dotfiles/.bashrc", mode = "symlink" }
+"~/.config/*" = { source = "~/dotfiles/.config/*", mode = "symlink" }
+"~/.local/bin" = { source = "~/dotfiles/.local/bin", mode = "symlink-each" }
+# AI agent共通ルール
+"~/.codex/AGENTS.md" = { source = "~/dotfiles/ai-agents/rules/AGENTS.md", mode = "symlink" }
+"~/.config/opencode/AGENTS.md" = { source = "~/dotfiles/ai-agents/rules/AGENTS.md", mode = "symlink" }
+"~/.agents/AGENTS.md" = { source = "~/dotfiles/ai-agents/rules/AGENTS.md", mode = "symlink" }
+# AI agent共通Skills
+"~/.agents/skills" = { source = "~/dotfiles/ai-agents/skills", mode = "symlink" }
+"~/.cline/skills" = { source = "~/dotfiles/ai-agents/skills", mode = "symlink" }
+
+[bootstrap.packages]
+"apt:build-essential" = "latest"
+"apt:ca-certificates" = "latest"
+"apt:curl" = "latest"
+"apt:git" = "latest"
+"apt:vim" = "latest"
+"apt:wget" = "latest"
+"apt:xsel" = "latest"
+
+[bootstrap.repos]
+"~/dotfiles" = { url = "git@github.com:Kai17-a/dotfiles.git", ref = "main" }
+
+[shell_alias]
+clip = "xsel --clipboard --input"
+ipl = "ip -br a"
+l = "lsd -l --group-directories-first --git"
+la = "lsd -a --group-directories-first --git"
+ll = "lsd -alF --group-directories-first --git"
+lla = "lsd -la --group-directories-first --git"
+ls = "lsd --group-directories-first --git"
+lt = "lsd --tree --group-directories-first --git"
+zj = "zellij"
+
+[tools]
+aws = { version = "latest", symlink_bins = "true" }
+bat = "latest"
+bottom = "latest"
+bun = "latest"
+codex = "latest"
+delta = "latest"
+doggo = "latest"
+eza = "latest"
+fd = "latest"
+fzf = "latest"
+gh = "latest"
+git-cliff = "latest"
+glow = "latest"
+helix = "latest"
+hyperfine = "latest"
+# jujutsu = "latest"
+lazydocker = "latest"
+lsd = "latest"
+node = "lts"
+ripgrep = "latest"
+rust = "latest"
+sd = "latest"
+terraform = "latest"
+uv = "latest"
+xh = "latest"
+yazi = "latest"
+zellij = "latest"
+zoxide = "latest"

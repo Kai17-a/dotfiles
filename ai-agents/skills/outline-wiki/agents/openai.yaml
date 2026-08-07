@@ -1,0 +1,4 @@
+interface:
+  display_name: "Outline Wiki"
+  short_description: "Outline MCPで文書管理とコレクション設計を支援"
+  default_prompt: "$outline-wiki を使い、Outline MCPでコレクションと文書を安全に整理してください。"

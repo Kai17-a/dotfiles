@@ -1,0 +1,28 @@
+[init]
+	defaultBranch = main
+[user]
+  name = Kai17-a
+	email = 61127029+Kai17-a@users.noreply.github.com
+[core]
+	editor = hx
+	pager = delta
+[interactive]
+    diffFilter = delta --color-only
+[delta]
+    navigate = true
+    line-numbers = true
+    side-by-side = true
+[merge]
+    conflictstyle = diff3
+[diff]
+    colorMoved = default
+[alias]
+    s = status
+    b = branch
+    c = checkout
+    a = add
+    aa = add -A
+    cm = commit -m
+    cp = cherry-pick
+    l = log --graph
+    graph = log --graph --pretty=format:'%x09%C(auto) %h %Cgreen %ar %Creset%x09by"%C(cyan ul)%an%Creset" %x09%C(auto)%s %d'

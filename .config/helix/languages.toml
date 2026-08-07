@@ -1,0 +1,157 @@
+# introduce new language server
+[language-server.scls]
+command = "simple-completion-language-server"
+
+[language-server.scls.config]
+feature_words = false                # enable completion by word
+feature_snippets = true              # enable snippets
+snippets_first = true                # completions will return before snippets by default
+snippets_inline_by_word_tail = false # suggest snippets by WORD tail, for example text `xsq|` become `x^2|` when snippet `sq` has body `^2`
+feature_unicode_input = false        # enable "unicode input"
+feature_paths = false                # enable path completion
+feature_citations = false            # enable citation completion (only on `citation` feature enabled)
+
+
+# write logs to /tmp/completion.log
+[language-server.scls.environment]
+RUST_LOG = "info,simple-completion-language-server=info"
+LOG_FILE = "/tmp/completion.log"
+
+# append language server to existed languages
+[[language]]
+name = "rust"
+language-servers = ["scls", "rust-analyzer"]
+
+[language-server.rust-analyzer.config.check]
+command = "clippy"
+
+[language-server.rust-analyzer.config.cargo]
+features = "all"
+
+[[language]]
+name = "git-commit"
+language-servers = ["scls"]
+
+[[language]]
+name = "sql"
+language-servers = ["scls", "sql-language-server"]
+
+[language-server.sql-language-server]
+command = "sql-language-server"
+args = ["up", "--method", "stdio"]
+
+[[language]]
+name = "toml"
+scope = "source.toml"
+injection-regex = "toml"
+file-types = [
+  "toml",
+  { glob = "pdm.lock" },
+  { glob = "poetry.lock" },
+  { glob = "Cargo.lock" },
+  { glob = "uv.lock" },
+  { glob = "containers.conf" },
+  { glob = "containers.conf.d/*.conf" },
+  { glob = "containers.conf.modules/*.conf" },
+  { glob = "mounts.conf" },
+  { glob = "policy.conf" },
+  { glob = "registries.conf" },
+  { glob = "storage.conf" },
+]
+comment-token = "#"
+language-servers = ["taplo"]
+indent = { tab-width = 2, unit = "  " }
+
+[[grammar]]
+name = "toml"
+source = { git = "https://github.com/ikatyang/tree-sitter-toml", rev = "7cff70bbcbbc62001b465603ca1ea88edd668704" }
+
+[[language]]
+name = "python"
+auto-format = true
+formatter = { command = "ruff", args = ["format", "-"] }
+language-servers = ["scls", "pyright", "ruff"]
+[language-server.pyright.config.python.analysis]
+typeCheckingMode = "basic"
+[language-server.ruff]
+command = "ruff"
+args = ["server"]
+
+[language-server.ruff.config.settings.lint]
+ignore = ["E501"]
+
+# introduce a new language to enable completion on any doc by forcing set language with :set-language stub
+[[language]]
+name = "stub"
+scope = "text.stub"
+file-types = []
+shebangs = []
+roots = []
+auto-format = false
+language-servers = ["scls"]
+
+[[language]]
+name = "bash"
+scope = "source.bash"
+injection-regex = "(shell|bash|zsh|sh)"
+file-types = [
+  "sh",
+  "bash",
+  "ash",
+  "dash",
+  "ksh",
+  "mksh",
+  "zsh",
+  "zshenv",
+  "zlogin",
+  "zlogout",
+  "zprofile",
+  "zshrc",
+  "eclass",
+  "ebuild",
+  "bazelrc",
+  "Renviron",
+  "zsh-theme",
+  "cshrc",
+  "tcshrc",
+  "bashrc_Apple_Terminal",
+  "zshrc_Apple_Terminal",
+  { glob = "i3/config" },
+  { glob = "sway/config" },
+  { glob = ".tmux.conf" },
+  { glob = "tmux.conf" },
+  { glob = ".sh_history" },
+  { glob = ".bash_history" },
+  { glob = ".bash_login" },
+  { glob = ".bash_logout" },
+  { glob = ".bash_profile" },
+  { glob = ".bashrc" },
+  { glob = ".profile" },
+  { glob = ".zshenv" },
+  { glob = ".zlogin" },
+  { glob = ".zlogout" },
+  { glob = ".zprofile" },
+  { glob = ".zshrc" },
+  { glob = ".zimrc" },
+  { glob = "APKBUILD" },
+  { glob = ".bash_aliases" },
+  { glob = "bash_completion" },
+  { glob = "bash-completion/completions/*" },
+  { glob = "bash_completion.d/*" },
+  { glob = ".Renviron" },
+  { glob = ".xprofile" },
+  { glob = ".xsession" },
+  { glob = ".xsessionrc" },
+  { glob = ".yashrc" },
+  { glob = ".yash_profile" },
+  { glob = ".hushlogin" },
+  { glob = ".xinitrc" },                      # ~/.xinitrc
+  { glob = "xinitrc" },                       # /etc/X11/xinit/xinitrc
+  { glob = ".xserverrc" },                    # ~/.xserverrc
+  { glob = "xserverrc" },                     # /etc/X11/xinit/xserverrc
+  { glob = "direnvrc" },                      # ~/.config/direnv/direnvrc
+]
+shebangs = ["sh", "bash", "dash", "zsh"]
+comment-token = "#"
+language-servers = ["bash-language-server"]
+indent = { tab-width = 2, unit = "  " }

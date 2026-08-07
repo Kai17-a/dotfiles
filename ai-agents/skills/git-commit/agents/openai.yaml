@@ -1,0 +1,4 @@
+interface:
+  display_name: "Git Commit"
+  short_description: "Review completed changes and create a Conventional Commit."
+  default_prompt: "Use $git-commit to review the completed changes, determine an appropriate commit unit, stage only the intended files, and create a Conventional Commit."
