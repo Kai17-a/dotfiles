@@ -1,6 +1,7 @@
-# Dotfiles
+# Private Dotfiles
 
-Debian/Ubuntu 系 Linux 環境用の Dotfiles。
+個人用のプライベートリポジトリで管理する、Debian/Ubuntu 系 Linux 環境用の
+Dotfiles。利用には、このリポジトリへアクセスできる GitHub アカウントが必要。
 
 [miseの公式生成bootstrap](https://mise.jdx.dev/cli/generate/bootstrap.html)を
 入口として、APTパッケージ、CLIツール、設定ファイルを
@@ -11,7 +12,7 @@ Debian/Ubuntu 系 Linux 環境用の Dotfiles。
 - Debian/Ubuntu 系 Linux
 - `sudo` を実行できるユーザー
 - インターネット接続
-- Git、curl、CA証明書、tar、sha256sum
+- Git、GitHub CLI、OpenSSH、curl、CA証明書、tar、sha256sum
 
 現在の設定ではリポジトリの配置先を `~/dotfiles` としている。別のパスへ
 clone すると、mise の `[bootstrap.repos]`、`[dotfiles]`、`.bashrc` の参照先と
@@ -24,14 +25,23 @@ clone すると、mise の `[bootstrap.repos]`、`[dotfiles]`、`.bashrc` の参
 
 ```bash
 sudo apt update
-sudo apt install -y ca-certificates coreutils curl git tar
+sudo apt install -y ca-certificates coreutils curl gh git openssh-client tar
 ```
 
-SSH 鍵をまだ用意していない環境でも取得できるよう、最初は HTTPS で clone
-する。
+GitHub CLI で、このプライベートリポジトリへアクセスできるアカウントに
+ログインする。Git のプロトコルには SSH を選ぶ。SSH 鍵がなければ、対話中の
+案内に従って作成・登録する。
 
 ```bash
-git clone https://github.com/Kai17-a/dotfiles.git ~/dotfiles
+gh auth login --hostname github.com --git-protocol ssh --web
+gh config set git_protocol ssh --host github.com
+gh auth status --hostname github.com
+```
+
+認証後、GitHub CLI 経由で `~/dotfiles` へ clone してセットアップする。
+
+```bash
+gh repo clone Kai17-a/dotfiles ~/dotfiles
 cd ~/dotfiles
 bash init.sh
 ```
@@ -41,18 +51,12 @@ bash init.sh
 1. `bin/mise` が固定バージョンのmiseをキャッシュへダウンロードする
 2. mise設定をtrustする
 3. `mise bootstrap --update` でAPTパッケージ、リポジトリ、dotfiles、CLIツールを適用する
-4. 必要であればGitHub CLIのログイン手順を表示する
+4. GitHub CLI未認証時に使うログインコマンドを表示する
 
 セットアップ完了後、新しいシェルを開始する。
 
 ```bash
 exec bash
-```
-
-GitHub CLIへログインする場合は、表示された案内に従う。
-
-```bash
-gh auth login --hostname github.com
 ```
 
 ## 既存ファイルがある環境
