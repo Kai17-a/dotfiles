@@ -20,4 +20,4 @@ if [[ -n "$ZELLIJ" ]]; then
 fi
 
 cd "$selected"
-zellij attach "$session_name" 2>/dev/null || zellij -s "$session_name"
+exec zellij attach --create "$session_name"
