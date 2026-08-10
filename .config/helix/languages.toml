@@ -69,13 +69,14 @@ source = { git = "https://github.com/ikatyang/tree-sitter-toml", rev = "7cff70bb
 [[language]]
 name = "python"
 auto-format = true
+language-servers = ["scls", "ruff", "ty"]
 formatter = { command = "ruff", args = ["format", "-"] }
-language-servers = ["scls", "pyright", "ruff"]
-[language-server.pyright.config.python.analysis]
-typeCheckingMode = "basic"
 [language-server.ruff]
 command = "ruff"
 args = ["server"]
+[language-server.ty]
+command = "ty"
+args = ["lsp"]
 
 [language-server.ruff.config.settings.lint]
 ignore = ["E501"]
