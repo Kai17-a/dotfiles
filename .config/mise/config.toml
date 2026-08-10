@@ -1,5 +1,5 @@
 [settings]
-disable_backends = ["npm", "vfox", "asdf"]
+disable_backends = ["vfox", "asdf"]
 dotfiles.root = "~/dotfiles"
 dotfiles.default_mode = "symlink"
 
@@ -55,6 +55,7 @@ fd = "latest"
 fzf = "latest"
 gh = "latest"
 git-cliff = "latest"
+gitui = "latest"
 glow = "latest"
 helix = "latest"
 hyperfine = "latest"
@@ -62,10 +63,13 @@ hyperfine = "latest"
 lazydocker = "latest"
 lsd = "latest"
 node = "lts"
+"npm:hunkdiff" = "latest"
 ripgrep = "latest"
+ruff = "latest"
 rust = "latest"
 sd = "latest"
 terraform = "latest"
+ty = "latest"
 uv = "latest"
 xh = "latest"
 yazi = "latest"
