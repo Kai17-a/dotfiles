@@ -9,6 +9,7 @@ _.path = ["~/.local/bin"]
 
 [dotfiles]
 "~/.bashrc" = { source = "~/dotfiles/.bashrc", mode = "symlink" }
+"~/.sqliterc" = { source = "~/dotfiles/.sqliterc", mode = "symlink" }
 "~/.config/*" = { source = "~/dotfiles/.config/*", mode = "symlink" }
 "~/.local/bin" = { source = "~/dotfiles/.local/bin", mode = "symlink-each" }
 # AI agent共通ルール
@@ -72,6 +73,7 @@ ripgrep = "latest"
 ruff = "latest"
 rust = "latest"
 sd = "latest"
+sqlite = "latest"
 terraform = "latest"
 ty = "latest"
 uv = "latest"
