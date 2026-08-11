@@ -45,33 +45,36 @@ gh repo clone Kai17-a/dotfiles ~/dotfiles
 cd ~/dotfiles
 ```
 
-新しい環境にも、OS やシェルが作成した既定の `~/.bashrc` が存在する。
-mise は既存ファイルを上書きしないため、`init.sh` の実行前に日時付きで退避する。
+新しい環境にも、OS やツールが作成した既存ファイルが存在する。`init.sh` は
+miseの管理対象と競合するファイルを検出し、一覧を表示して退避の可否を
+`Y/n` で確認する。
 
 ```bash
-bashrc_backup="$HOME/.bashrc.before-dotfiles.$(date +%Y%m%d-%H%M%S)"
-mv "$HOME/.bashrc" "$bashrc_backup"
-
 bash init.sh
 ```
+
+`Y` または何も入力せずEnterを押すと、競合ファイルを階層構造ごと
+`~/.dotfiles-backups/<日時>.<一意な文字列>/` へ移動してからセットアップを
+続ける。`n` または `Y/n` 以外を入力した場合は、ファイルを移動せず後続処理も
+実行しない。
 
 `init.sh` は次の順序でセットアップする。
 
 1. `bin/mise` が固定バージョンのmiseをキャッシュへダウンロードする
 2. mise設定をtrustする
-3. `mise bootstrap --update` でAPTパッケージ、リポジトリ、dotfiles、CLIツールを適用する
-4. GitHub CLI の認証を確認し、Git のプロトコルを SSH に設定する
+3. 既存dotfileとの競合を確認し、承認された場合だけバックアップへ移動する
+4. `mise bootstrap --update` でAPTパッケージ、リポジトリ、dotfiles、CLIツールを適用する
+5. GitHub CLI の認証を確認し、Git のプロトコルを SSH に設定する
 
 GitHub CLI が未認証の場合は、SSH を使ってログインするためのコマンドを表示する。
 
-セットアップ後、退避した `.bashrc` に引き継ぐべき設定がないか確認する。
+セットアップ後、バックアップに引き継ぐべき設定がないか確認する。
 
 ```bash
-diff -u "$bashrc_backup" ~/dotfiles/.bashrc
+find ~/.dotfiles-backups \( -type f -o -type l \)
 ```
 
-`diff` の終了コード `1` は差分があることを表す。必要な設定だけを
-`~/dotfiles/.bashrc` へ取り込み、確認後に退避ファイルを削除する。
+必要な設定だけをdotfilesへ取り込み、確認後に不要なバックアップを削除する。
 
 最後に新しいシェルを開始する。
 
@@ -81,8 +84,7 @@ exec bash
 
 ## その他の既存ファイル
 
-`.bashrc` 以外にも、mise は管理対象に既存の実ファイルやディレクトリがあると
-上書きせず停止する。主な管理対象は次のとおり。
+miseが競合として検出する主な管理対象は次のとおり。
 
 - `~/.config/git`
 - `~/.config/helix`
@@ -104,8 +106,7 @@ mise ERROR files: refusing to overwrite existing files:
   <既存ファイル>
 ```
 
-競合したファイルは内容を確認して個別に退避し、`bash init.sh` を再実行する。
-`--force-dotfiles` は、バックアップと差分確認が済んだ場合にのみ使用する。
+通常は `init.sh` が競合ファイルを退避するため、`--force-dotfiles` は使用しない。
 
 ## 設定の再適用
 
