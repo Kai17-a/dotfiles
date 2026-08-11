@@ -31,6 +31,10 @@ _.path = ["~/.local/bin"]
 [bootstrap.repos]
 "~/dotfiles" = { url = "git@github.com:Kai17-a/dotfiles.git", ref = "main" }
 
+[tasks.bootstrap]
+description = "Install tools required outside mise backends"
+run = "cargo install --locked --git https://github.com/estin/simple-completion-language-server.git"
+
 [shell_alias]
 clip = "xsel --clipboard --input"
 ipl = "ip -br a"
