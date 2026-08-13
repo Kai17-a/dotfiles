@@ -1,0 +1,84 @@
+#!/usr/bin/env bash
+#MISE description="Dockerをインストール（Ubuntu専用）"
+
+set -euo pipefail
+
+if [[ "$(id -u)" -eq 0 ]]; then
+  echo "rootではなく、Dockerを利用する一般ユーザーで実行してください。" >&2
+  exit 1
+fi
+
+source /etc/os-release
+
+if [[ "${ID:-}" != "ubuntu" ]]; then
+  echo "Ubuntu専用タスクです（検出: ${PRETTY_NAME:-unknown}）" >&2
+  exit 1
+fi
+
+if command -v docker >/dev/null 2>&1; then
+  echo "Dockerはすでにインストールされています: $(docker --version)"
+  exit 0
+fi
+
+ubuntu_codename="${UBUNTU_CODENAME:-${VERSION_CODENAME:?VERSION_CODENAMEが設定されていません}}"
+conflicting_packages=()
+
+for package in \
+  docker.io \
+  docker-compose \
+  docker-compose-v2 \
+  docker-doc \
+  docker-buildx \
+  podman-docker \
+  containerd \
+  runc
+do
+  if dpkg-query -W -f='${Status}' "$package" 2>/dev/null |
+    grep -q 'ok installed'
+  then
+    conflicting_packages+=("$package")
+  fi
+done
+
+if ((${#conflicting_packages[@]} > 0)); then
+  sudo apt-get remove -y "${conflicting_packages[@]}"
+fi
+
+# 別ディストリビューション向けの古いDockerリポジトリがあると
+# apt-get updateが失敗するため、公式設定を作り直す前に削除する。
+sudo rm -f /etc/apt/sources.list.d/docker.sources
+
+sudo apt-get update
+sudo apt-get install -y ca-certificates curl
+
+sudo install -m 0755 -d /etc/apt/keyrings
+sudo curl -fsSL \
+  https://download.docker.com/linux/ubuntu/gpg \
+  -o /etc/apt/keyrings/docker.asc
+sudo chmod a+r /etc/apt/keyrings/docker.asc
+
+sudo tee /etc/apt/sources.list.d/docker.sources >/dev/null <<EOF
+Types: deb
+URIs: https://download.docker.com/linux/ubuntu
+Suites: ${ubuntu_codename}
+Components: stable
+Architectures: $(dpkg --print-architecture)
+Signed-By: /etc/apt/keyrings/docker.asc
+EOF
+
+sudo apt-get update
+sudo apt-get install -y \
+  docker-ce \
+  docker-ce-cli \
+  containerd.io \
+  docker-buildx-plugin \
+  docker-compose-plugin
+
+sudo systemctl enable --now docker
+sudo usermod -aG docker "$(id -un)"
+
+sudo docker run --rm hello-world
+
+echo
+echo "Dockerのインストールが完了しました。"
+echo "sudoなしで利用するには、一度ログアウトして再ログインしてください。"
