@@ -1,0 +1,36 @@
+#!/usr/bin/env bash
+#MISE description="miseを最新バージョンに更新してコミット"
+
+set -euo pipefail
+
+dotfiles_dir="${HOME}/dotfiles"
+cd "$dotfiles_dir"
+
+release_url="$(
+  curl -fsSL \
+    -o /dev/null \
+    -w '%{url_effective}' \
+    https://github.com/jdx/mise/releases/latest
+)"
+
+version="${release_url##*/}"
+version="${version#v}"
+
+if [[ ! "$version" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+  echo "miseのバージョンを取得できませんでした: $release_url" >&2
+  exit 1
+fi
+
+./bin/mise generate bootstrap \
+  --version "$version" \
+  --write bin/mise
+
+./bin/mise --version
+
+if git diff --quiet -- bin/mise; then
+  echo "miseはすでに最新です: $version"
+  exit 0
+fi
+
+git add bin/mise
+git commit --only bin/mise -m "chore(mise): update to ${version}"
