@@ -5,6 +5,9 @@ C-r = ":rl"
 C-s = ":write"
 C-y = ":sh zellij run -n Yazi -c -f -x 10%% -y 10%% --width 80%% --height 80%% -- bash ~/.config/helix/yazi-picker.sh"
 ret = "goto_word"
+"A-l" = "goto_next_buffer"
+"A-h" = "goto_previous_buffer"
 
 [editor]
 jump-label-alphabet = "jfkdls;aurieowpqnvmcxz"
+bufferline = "always"
