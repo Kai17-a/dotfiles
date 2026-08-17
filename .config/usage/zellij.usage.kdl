@@ -1,0 +1,27 @@
+name "Zellij"
+bin "zellij"
+about "Terminal workspace"
+
+cmd "attach" help="Attach to an existing session" {
+    alias "a"
+    arg "[session]" help="Name of the session to attach to"
+    complete "session" run="zellij list-sessions --short 2>/dev/null"
+}
+
+cmd "delete-session" help="Delete a session" {
+    alias "d"
+    arg "[session]" help="Name of the session to delete"
+    complete "session" run="zellij list-sessions --short 2>/dev/null"
+}
+
+cmd "kill-session" help="Kill a session" {
+    alias "k"
+    arg "[session]" help="Name of the session to kill"
+    complete "session" run="zellij list-sessions --short 2>/dev/null"
+}
+
+cmd "watch" help="Watch a session in read-only mode" {
+    alias "w"
+    arg "[session]" help="Name of the session to watch"
+    complete "session" run="zellij list-sessions --short 2>/dev/null"
+}

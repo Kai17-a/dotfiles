@@ -110,7 +110,32 @@ fi
 # Zellij completion
 if command -v zellij >/dev/null 2>&1; then
     source <(zellij setup --generate-completion bash)
-    complete -F _zellij -o bashdefault -o default zj
+
+    _zellij_with_sessions() {
+        local session_commands=" attach a delete-session d kill-session k watch w "
+
+        if [[ $COMP_CWORD -eq 2 && $session_commands == *" ${COMP_WORDS[1]:-} "* ]] &&
+            command -v usage >/dev/null 2>&1; then
+            local usage_spec="$HOME/dotfiles/.config/usage/zellij.usage.kdl"
+            mapfile -t COMPREPLY < <(usage complete-word \
+                --file "$usage_spec" \
+                --shell bash \
+                --cword "$COMP_CWORD" \
+                -- "${COMP_WORDS[@]}")
+            return
+        fi
+
+        _zellij "$@"
+
+        if [[ $COMP_CWORD -eq 1 ]]; then
+            local aliases="a ac d da e k ka la ls p r w"
+            local alias_matches
+            mapfile -t alias_matches < <(compgen -W "$aliases" -- "${COMP_WORDS[COMP_CWORD]}")
+            COMPREPLY+=("${alias_matches[@]}")
+        fi
+    }
+
+    complete -F _zellij_with_sessions -o bashdefault -o default zellij zj
 fi
 
 # zoxide
